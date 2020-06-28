@@ -11,7 +11,8 @@
 #include <Rosetta/PlayMode/Games/GameConfig.hpp>
 #include <Rosetta/PlayMode/Views/BoardRefView.hpp>
 
-using namespace RosettaStone::PlayMode;
+using namespace RosettaStone;
+using namespace PlayMode;
 using namespace TestUtils;
 
 TEST_CASE("[BoardRefView] - GetSide")
@@ -304,8 +305,8 @@ TEST_CASE("[BoardRefView] - GetHeroPower")
     game.ProcessUntil(Step::MAIN_ACTION);
 
     BoardRefView board(game, game.GetCurrentPlayer()->playerType);
-    CHECK_EQ(board.GetHeroPower(PlayerType::PLAYER1).card->id, "CS2_102");
-    CHECK_EQ(board.GetHeroPower(PlayerType::PLAYER2).card->id, "CS2_083b");
+    CHECK_EQ(board.GetHeroPower(PlayerType::PLAYER1).card->id, "HERO_01bp");
+    CHECK_EQ(board.GetHeroPower(PlayerType::PLAYER2).card->id, "HERO_03bp");
 }
 
 TEST_CASE("[BoardRefView] - GetWeapon")

@@ -7,24 +7,28 @@
 #ifndef ROSETTASTONE_BATTLEGROUNDS_GAME_HPP
 #define ROSETTASTONE_BATTLEGROUNDS_GAME_HPP
 
-#include <Rosetta/Battlegrounds/Enums/GameEnums.hpp>
-#include <Rosetta/Battlegrounds/Models/Player.hpp>
+#include <Rosetta/Battlegrounds/Games/GameState.hpp>
 
-#include <array>
+#include <atomic>
+#include <tuple>
+#include <vector>
 
 namespace RosettaStone::Battlegrounds
 {
 //!
 //! \brief Game class.
 //!
-//! This class stores Battlegrounds related states which consists of information
-//! of 8 players. Battlegrounds is a game mode where eight players face off in
-//! 1v1 rounds, with the goal to be the last player standing. Each round
-//! consists of two phases.
+//! This class processes the game, Hearthstone: Battlegrounds. Battlegrounds is
+//! a game mode where eight players face off in 1v1 rounds, with the goal to be
+//! the last player standing. Each round consists of two phases.
 //!
 class Game
 {
  public:
+    //! Gets the game state.
+    //! \return The game state.
+    GameState& GetGameState();
+
     //! Starts the game.
     void Start();
 
@@ -40,11 +44,34 @@ class Game
     //! Processes the game over phase.
     void GameOver();
 
-    Phase phase = Phase::INVALID;
-    Phase nextPhase = Phase::INVALID;
+    //! Determines each player's opponent.
+    void DetermineOpponent();
+
+    //! Calculates the rank of players according to their health.
+    //! \return A container that stores the player index and the rank.
+    std::vector<std::tuple<int, int>> CalculateRank();
+
+    //! Determines the player to fight the ghost.
+    //! \param playerData The player data that stores index and rank.
+    //! \return The index of player to fight the ghost.
+    std::size_t DeterminePlayerToFightGhost(
+        std::vector<std::tuple<int, int>>& playerData);
+
+    //! Pairs a list of players.
+    //! \param playerData The player data that stores index and rank.
+    void PairPlayers(std::vector<std::tuple<int, int>>& playerData);
+
+    //! Finds the index of the opponent player to fight next.
+    //! \param playerIdx The index of the player to find opponent.
+    //! \return The index of the opponent player to fight next.
+    std::size_t FindPlayerNextFight(std::size_t playerIdx);
 
  private:
-    std::array<Player, 8> players;
+    GameState m_gameState{};
+
+    Race m_excludeRace = Race::INVALID;
+    std::vector<std::tuple<std::size_t, std::size_t>> m_playerFightPair;
+    std::atomic<int> m_playerCount = 0;
 };
 }  // namespace RosettaStone::Battlegrounds
 

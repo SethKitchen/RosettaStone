@@ -12,7 +12,8 @@
 #include <Rosetta/PlayMode/Zones/FieldZone.hpp>
 #include <Rosetta/PlayMode/Zones/HandZone.hpp>
 
-using namespace RosettaStone::PlayMode;
+using namespace RosettaStone;
+using namespace PlayMode;
 using namespace PlayerTasks;
 using namespace SimpleTasks;
 
@@ -93,10 +94,10 @@ TEST_CASE("[Demon Hunter : Spell] - BT_173 : Command the Illidari")
 }
 
 // ------------------------------------ SPELL - DEMONHUNTER
-// [BT_175] Twin Slice - COST:0
+// [BT_175] Twin Slice - COST:1
 // - Set: Demon Hunter Initiate, Rarity: Common
 // --------------------------------------------------------
-// Text: Give your hero +1 Attack this turn.
+// Text: Give your hero +2 Attack this turn.
 //       Add 'Second Slice' to your hand.
 // --------------------------------------------------------
 TEST_CASE("[Demon Hunter : Spell] - BT_175 : Twin Slice")
@@ -128,12 +129,14 @@ TEST_CASE("[Demon Hunter : Spell] - BT_175 : Twin Slice")
     CHECK_EQ(curPlayer->GetHero()->GetAttack(), 1);
 
     game.Process(curPlayer, PlayCardTask::Spell(card1));
-    CHECK_EQ(curPlayer->GetHero()->GetAttack(), 2);
+    CHECK_EQ(curPlayer->GetRemainingMana(), 8);
+    CHECK_EQ(curPlayer->GetHero()->GetAttack(), 3);
     CHECK_EQ(curHand.GetCount(), 5);
     CHECK_EQ(curHand[4]->card->name, "Second Slice");
 
     game.Process(curPlayer, PlayCardTask::Spell(curHand[4]));
-    CHECK_EQ(curPlayer->GetHero()->GetAttack(), 3);
+    CHECK_EQ(curPlayer->GetRemainingMana(), 7);
+    CHECK_EQ(curPlayer->GetHero()->GetAttack(), 5);
 
     game.Process(curPlayer, EndTurnTask());
     game.ProcessUntil(Step::MAIN_ACTION);
@@ -212,7 +215,7 @@ TEST_CASE("[Demon Hunter : Weapon] - BT_271 : Flamereaper")
 }
 
 // ----------------------------------- MINION - DEMONHUNTER
-// [BT_351] Battlefiend (*) - COST:1 [ATK:2/HP:2]
+// [BT_351] Battlefiend (*) - COST:1 [ATK:1/HP:2]
 // - Race: Demon, Set: Demon Hunter Initiate, Rarity: Common
 // --------------------------------------------------------
 // Text: After your hero attacks, gain +1 Attack.
@@ -246,12 +249,12 @@ TEST_CASE("[Demon Hunter : Minion] - BT_351 : Battlefiend")
         Generic::DrawCard(curPlayer, Cards::FindCardByName("Battlefiend"));
 
     game.Process(curPlayer, PlayCardTask::Minion(card1));
-    CHECK_EQ(curField[0]->GetAttack(), 2);
+    CHECK_EQ(curField[0]->GetAttack(), 1);
 
     game.Process(curPlayer, HeroPowerTask());
     game.Process(curPlayer,
                  AttackTask(curPlayer->GetHero(), opPlayer->GetHero()));
-    CHECK_EQ(curField[0]->GetAttack(), 3);
+    CHECK_EQ(curField[0]->GetAttack(), 2);
 
     game.Process(curPlayer, EndTurnTask());
     game.ProcessUntil(Step::MAIN_ACTION);
@@ -262,7 +265,7 @@ TEST_CASE("[Demon Hunter : Minion] - BT_351 : Battlefiend")
     game.Process(curPlayer, HeroPowerTask());
     game.Process(curPlayer,
                  AttackTask(curPlayer->GetHero(), opPlayer->GetHero()));
-    CHECK_EQ(curField[0]->GetAttack(), 4);
+    CHECK_EQ(curField[0]->GetAttack(), 3);
 }
 
 // ------------------------------------ SPELL - DEMONHUNTER
@@ -971,7 +974,7 @@ TEST_CASE("[Demon Hunter : Spell] - BT_753 : Mana Burn")
 // - Set: Demon Hunter Initiate, Rarity: Epic
 // --------------------------------------------------------
 // Text: <b>Lifesteal</b>. Deal 3 damage to a minion.
-//       <b>Outcast:</b> This costs (0).
+//       <b>Outcast:</b> This costs (1).
 // --------------------------------------------------------
 // GameTag:
 // - LIFESTEAL = 1
@@ -1022,7 +1025,7 @@ TEST_CASE("[Demon Hunter : Spell] - BT_801 : Eye Beam")
     CHECK_EQ(opHero->GetHealth(), 18);
 
     game.Process(opPlayer, PlayCardTask::SpellTarget(card3, card1));
-    CHECK_EQ(opPlayer->GetRemainingMana(), 7);
+    CHECK_EQ(opPlayer->GetRemainingMana(), 6);
     CHECK_EQ(opHero->GetHealth(), 21);
 }
 
@@ -1140,7 +1143,7 @@ TEST_CASE("[Demon Hunter : Weapon] - BT_922 : Umberwing")
 }
 
 // ----------------------------------- MINION - DEMONHUNTER
-// [BT_937] Altruis the Outcast - COST:3 [ATK:3/HP:2]
+// [BT_937] Altruis the Outcast - COST:4 [ATK:4/HP:2]
 // - Set: Demon Hunter Initiate, Rarity: Legendary
 // --------------------------------------------------------
 // Text: After you play the left- or right-most card in your hand,

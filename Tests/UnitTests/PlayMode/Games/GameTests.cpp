@@ -12,7 +12,6 @@
 #include <Rosetta/PlayMode/Cards/Cards.hpp>
 #include <Rosetta/PlayMode/Games/Game.hpp>
 #include <Rosetta/PlayMode/Games/GameConfig.hpp>
-#include <Rosetta/PlayMode/Managers/GameManager.hpp>
 #include <Rosetta/PlayMode/Tasks/PlayerTasks/AttackTask.hpp>
 #include <Rosetta/PlayMode/Tasks/PlayerTasks/EndTurnTask.hpp>
 #include <Rosetta/PlayMode/Tasks/PlayerTasks/PlayCardTask.hpp>
@@ -23,7 +22,8 @@
 
 using Random = effolkronium::random_static;
 
-using namespace RosettaStone::PlayMode;
+using namespace RosettaStone;
+using namespace PlayMode;
 using namespace PlayerTasks;
 
 class TestActionParams : public ActionParams
@@ -339,11 +339,11 @@ TEST_CASE("[Game] - CreateView")
     game.ProcessUntil(Step::MAIN_ACTION);
 
     const auto player1View = game.CreateView();
-    CHECK_EQ(player1View.GetMyHeroPower().cardID, "CS2_102");
+    CHECK_EQ(player1View.GetMyHeroPower().cardID, "HERO_01bp");
 
     game.Process(game.GetCurrentPlayer(), EndTurnTask());
     game.ProcessUntil(Step::MAIN_ACTION);
 
     const auto player2View = game.CreateView();
-    CHECK_EQ(player2View.GetMyHeroPower().cardID, "CS2_083b");
+    CHECK_EQ(player2View.GetMyHeroPower().cardID, "HERO_03bp");
 }
